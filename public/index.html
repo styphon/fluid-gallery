@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Fluid Gallery</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link href="css/bootstrap.css" rel="stylesheet">
+        <link href="css/fluid-gallery.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <h1>Example Fluid Gallery</h1>
+            </header>
+            <div class="row">
+                <div class="col-xs-12 col-md-5">
+                    An example gallery...
+                </div>
+                <div class="col-xs-12 col-md-7 fluid-gallery">
+                    <ul>
+                        <li data-title="An example title" data-description="A short description of the image">
+                            <img src="gallery/1/01.jpg">
+                        </li>
+                        <li><img src="gallery/1/02.jpg"></li>
+                        <li><img src="gallery/1/03.jpg"></li>
+                        <li><img src="gallery/1/04.jpg"></li>
+                        <li><img src="gallery/1/05.jpg"></li>
+                        <li><img src="gallery/1/06.jpg"></li>
+                        <li><img src="gallery/1/07.jpg"></li>
+                        <li><img src="gallery/1/08.jpg"></li>
+                        <li><img src="gallery/1/09.jpg"></li>
+                        <li><img src="gallery/1/10.jpg"></li>
+                        <li><img src="gallery/1/11.jpg"></li>
+                        <li><img src="gallery/1/12.jpg"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <script src="js/bundle.js"></script>
+        <script src="js/fluid-gallery.js"></script>
+        <script>
+            $(function () {
+                $('.fluid-gallery').fluidGallery({
+                    transition: 'fade',
+	                controlsPosition: 'top'
+                });
+            });
+        </script>
+    </body>
+</html>
