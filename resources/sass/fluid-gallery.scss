@@ -1,5 +1,6 @@
 .fluid-gallery {
-  ul {
+  // Hide the gallery images until the gallery has finished initialising.
+  > ul {
     display: none;
   }
 
@@ -78,14 +79,14 @@
         width: 99999px;
         height: 100%;
 
-        > img {
-          display: inline-block;
+        > ul {
           height: 100%;
-          padding:2px;
-          background: #CCC;
 
-          &.active {
-            background: #666;
+          > li {
+            display: block;
+            float: left;
+            height: 100%;
+            padding: 2px;
           }
         }
       }
@@ -102,6 +103,31 @@
         position:absolute;
         top: 0;
         left: 0;
+
+        > ul {
+          padding: 0;
+
+          > li {
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+
+            img {
+              background: #CCC;
+              height: 100%;
+              border: 1px solid #CCC;
+              -webkit-box-sizing: border-box;
+              -moz-box-sizing: border-box;
+              box-sizing: border-box;
+
+              &.active {
+                border-color: #F00;
+              }
+            }
+          }
+        }
       }
     }
   }

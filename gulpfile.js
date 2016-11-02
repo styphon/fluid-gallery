@@ -11,6 +11,12 @@ var browserify = require('browserify'),
 	tap = require('gulp-tap'),
 	uglify = require('gulp-uglify');
 
+gulp.task('copy', function ()
+{
+	gulp.src('./node_modules/bootstrap-sass/assets/fonts/**/*.{ttf,woff,eof,svg}')
+		.pipe(gulp.dest('./public/fonts/'));
+});
+
 gulp.task('javascript', function ()
 {
 	return gulp.src('./resources/js/**/*.js', {read: false})
@@ -44,4 +50,4 @@ gulp.task('watch', function ()
 	gulp.watch('./resources/sass/**/*.scss', ['sass']);
 });
 
-gulp.task('default', ['javascript', 'sass']);
+gulp.task('default', ['copy', 'javascript', 'sass']);

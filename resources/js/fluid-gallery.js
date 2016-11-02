@@ -29,6 +29,7 @@
 		};
 		this._id = "fg-";
 		this._images = [];
+		this._imagesLeftToLoad = 0;
 		this._name = pluginName;
 		this._controlsPos = 'none';
 
@@ -45,8 +46,11 @@
 			/* @todo validate options */
 			this.getImages();
 			this.generateHtml();
-			this.setDims();
+			this.waitForImagesToLoad();
+		},
 
+		initAfterImagesHaveLoaded: function () {
+			this.setDims();
 			this.bindEvents();
 		},
 
@@ -63,12 +67,14 @@
 		getImages: function () {
 			var gallery = this;
 			gallery.$gallery.find('li').each(function () {
+				var $img = $(this).children('img');
 				gallery._images.push({
-					src: $(this).children('img').attr('src'),
+					src: $(this).data('image') ? $(this).data('image') : $img.attr('src'),
 					title: $(this).data('title'),
 					description: $(this).data('description')
 				})
 			});
+			gallery._imagesLeftToLoad = gallery._images.length;
 		},
 
 		generateHtml: function () {
@@ -79,15 +85,16 @@
 				this._controlsPos = 'horizontal';
 			}
 
-			gallery.$wrap = $('<div></div>')
-				.addClass('fluid-gallery-wrapper');
+			gallery.$wrap = $('<div />')
+				.addClass('fluid-gallery-wrapper')
+				.appendTo(gallery.$gallery);
 			//.attr('id', gallery._id);
 
-			gallery.$window = $('<div></div>')
+			gallery.$window = $('<div />')
 				.addClass('fluid-gallery-window')
 				.appendTo(gallery.$wrap);
 
-			gallery.$activeSlide = $('<div></div>')
+			gallery.$activeSlide = $('<div />')
 				.addClass('fluid-gallery-active-slide')
 				.appendTo(gallery.$window);
 
@@ -95,7 +102,7 @@
 				.attr('src', gallery._images[0].src)
 				.appendTo(gallery.$activeSlide);
 
-			gallery.$nextSlide = $('<div></div>')
+			gallery.$nextSlide = $('<div />')
 				.addClass('fluid-gallery-next-slide')
 				.appendTo(gallery.$window);
 
@@ -103,7 +110,7 @@
 				.attr('src', gallery._images[1].src)
 				.appendTo(gallery.$nextSlide);
 
-			gallery.$controls = $('<div></div>')
+			gallery.$controls = $('<div />')
 				.addClass('fluid-gallery-controls ' + gallery._controlsPos + ' ' + gallery.options.controlsPosition);
 			if (gallery.options.controlsPosition == "top" || gallery.options.controlsPosition == "left") {
 				gallery.$controls.prependTo(gallery.$wrap);
@@ -112,48 +119,67 @@
 			}
 
 			if (gallery.options.controlsPosition != "none") {
-				gallery.$thumbnailsWindow = $('<div></div>')
+				gallery.$thumbnailsWindow = $('<div />')
 					.addClass('fluid-gallery-thumbnails-window')
 					.appendTo(gallery.$controls);
 
-				gallery.$thumbnails = $('<div></div>')
+				gallery.$thumbnails = $('<div />')
 					.addClass('fluid-gallery-thumbnails')
-					.appendTo(gallery.$thumbnailsWindow);
+					.appendTo(gallery.$thumbnailsWindow)
+					.append(gallery.$gallery.children('ul'));
 
-				$.each(gallery._images, function () {
-					$('<img>')
-						.attr('src', this.src)
-						.appendTo(gallery.$thumbnails);
-				});
 				gallery.$thumbnails.find('img').first().addClass('active');
 			}
 
 			if (gallery.options.arrows != "none")
 			{
-				gallery.$previousArrow = $('<div></div>')
+				gallery.$previousArrow = $('<div />')
 					.addClass('fluid-gallery-previous-arrow');
-				gallery.$nextArrow = $('<div></div>')
+				gallery.$nextArrow = $('<div />')
 					.addClass('fluid-gallery-next-arrow');
 
 				if (gallery.options.arrows == "controls")
 				{
 					if (gallery._controlsPos == "horizontal")
 					{
-						gallery.$previousArrow.html('<i class="icon-chevron-left"></i>');
-						gallery.$nextArrow.html('<i class="icon-chevron-right"></i>');
+						gallery.$previousArrow.html('<span />')
+							.addClass("glyphicon glyphicon-menu-left")
+							.attr("aria-hidden", "true");
+						gallery.$nextArrow.html('<span />')
+							.addClass("glyphicon glyphicon-menu-right")
+							.attr("aria-hidden", "true");
 					}
 					else if (gallery._controlsPos == "vertical")
 					{
-						gallery.$previousArrow.html('<i class="icon-chevron-up"></i>');
-						gallery.$nextArrow.html('<i class="icon-chevron-down"></i>');
+						gallery.$previousArrow.html('<span />', {"class": "glyphicon glyphicon-menu-up", "aria-hidden": "true"});
+						gallery.$nextArrow.html('<span />', {"class": "glyphicon glyphicon-menu-down", "aria-hidden": "true"});
 					}
 					gallery.$controls.prepend(gallery.$previousArrow)
 						.append(gallery.$nextArrow);
 				}
 			}
+		},
 
-			gallery.$gallery.html(gallery.$wrap);
+		waitForImagesToLoad: function () {
+			var gallery = this;
 
+			gallery.$gallery.find('li').each(function (i) {
+				var $img = $(this).children('img');
+
+				if ( $img.complete ) {
+					gallery.imageLoaded();
+				} else {
+					$img.one('load', function () {
+						gallery.imageLoaded();
+					});
+				}
+			});
+		},
+
+		imageLoaded: function () {
+			if ( --this._imagesLeftToLoad == 0 ) {
+				this.initAfterImagesHaveLoaded();
+			}
 		},
 
 		setDims: function () {
@@ -182,13 +208,22 @@
 				gallery.$thumbnailsWindow.width(gallery._dims.thumbnailsWindow.width);
 
 				gallery.$thumbnails.find('img').each(function () {
-					console.log($(this).outerWidth(true), gallery._dims.thumbnailsWindow.height, $(this).outerHeight(true), Math.ceil( $(this).outerWidth(true) * ( gallery._dims.thumbnailsWindow.height / $(this).outerHeight(true) ) ));
-					gallery._dims.thumbnails.width += Math.ceil( $(this).width() * ( gallery._dims.thumbnailsWindow.height / $(this).height() ) );
+					/*console.log(
+						$(this).outerWidth(true),
+						gallery._dims.thumbnailsWindow.height,
+						$(this).outerHeight(true),
+						Math.ceil( $(this).outerWidth(true) * ( gallery._dims.thumbnailsWindow.height / $(this).outerHeight(true) ) )
+					);*/
+					gallery._dims.thumbnails.width += Math.ceil( $(this).outerWidth(true) * ( gallery._dims.thumbnailsWindow.height / $(this).outerHeight(true) ) );
 				});
 				gallery._dims.thumbnails.height = gallery._dims.thumbnailsWindow.height;
 				gallery.$thumbnails.width(gallery._dims.thumbnails.width);
 				gallery.$thumbnails.height(gallery._dims.thumbnails.height);
 			}
+
+			// There is an issue where the li would still be the full width of the image, so we force a redraw to correct this.
+			gallery.$thumbnails.find('li').hide().show(0);
+
 		},
 
 		// Bind events that trigger methods
@@ -200,6 +235,16 @@
 				gallery.$previousArrow.click($.proxy(gallery.previousSlide, gallery));
 				gallery.$nextArrow.click($.proxy(gallery.nextSlide, gallery));
 			}
+
+			gallery.$thumbnails.find('li').each(function (i)
+			{
+				$(this).click(function () {
+					gallery._activePointer = i;
+					gallery.$nextSlide.children('img').attr('src', gallery._images[gallery._activePointer].src);
+					gallery.transitions[gallery.options.transition](gallery);
+					$.proxy(gallery.setThumbnail(), gallery);
+				});
+			});
 		},
 
 		// Unbind events that trigger methods
@@ -271,7 +316,7 @@
 				left = max;
 			}
 
-			gallery.$thumbnails.animate({"left": left}, gallery.options.transitionSpeed);
+			gallery.$thumbnails.stop().animate({"left": left}, gallery.options.transitionSpeed);
 		},
 
 		callback: function() {
