@@ -147,7 +147,7 @@
 			gallery.$gallery.find('li').each(function (i) {
 				var $img = $(this).children('img');
 
-				if ( $img.complete ) {
+				if ( $img[0].complete ) {
 					gallery.imageLoaded();
 				} else {
 					$img.one('load', function () {
