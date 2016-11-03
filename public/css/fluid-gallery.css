@@ -1,89 +1,85 @@
 .fluid-gallery > ul {
   display: none; }
 
-.fluid-gallery .fluid-gallery-window {
-  overflow: hidden;
+.fluid-gallery-wrapper {
+  display: flex;
   position: relative;
-  border: 1px solid #CCC;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box; }
-  .fluid-gallery .fluid-gallery-window:before, .fluid-gallery .fluid-gallery-window:after {
-    content: " ";
-    display: table; }
-  .fluid-gallery .fluid-gallery-window:after {
-    clear: both; }
-  .fluid-gallery .fluid-gallery-window .fluid-gallery-active-slide {
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%; }
+  .fluid-gallery-wrapper .fluid-gallery-window {
     width: 100%;
+    padding-bottom: 56.25%;
+    margin: auto;
     position: relative;
-    background-color: #FFF;
-    z-index: 1; }
-  .fluid-gallery .fluid-gallery-window.vertical .fluid-gallery-active-slide {
-    width: 90%;
-    float: right; }
-  .fluid-gallery .fluid-gallery-window .fluid-gallery-next-slide {
-    width: 100%;
-    position: absolute;
-    right: -100%;
-    top: 0;
-    opacity: 0;
-    background-color: #FFF;
-    z-index: 2; }
-  .fluid-gallery .fluid-gallery-window .fluid-gallery-active-slide img,
-  .fluid-gallery .fluid-gallery-window .fluid-gallery-next-slide img {
-    left: 50%;
-    max-height: 100%;
-    max-width: 100%;
-    position: absolute;
-    /* Don't forget to add position: relative; to your container. */
-    top: 50%;
-    transform: translate(-50%, -50%); }
-
-.fluid-gallery .fluid-gallery-controls {
-  display: table; }
-  .fluid-gallery .fluid-gallery-controls.bottom {
-    margin-top: 10px; }
-  .fluid-gallery .fluid-gallery-controls.top {
-    margin-bottom: 10px; }
-  .fluid-gallery .fluid-gallery-controls.horizontal .fluid-gallery-previous-arrow,
-  .fluid-gallery .fluid-gallery-controls.horizontal .fluid-gallery-next-arrow {
-    display: table-cell;
-    vertical-align: middle;
-    cursor: pointer; }
-  .fluid-gallery .fluid-gallery-controls.horizontal .fluid-gallery-thumbnails {
-    width: 99999px;
-    height: 100%; }
-    .fluid-gallery .fluid-gallery-controls.horizontal .fluid-gallery-thumbnails > ul {
-      height: 100%; }
-      .fluid-gallery .fluid-gallery-controls.horizontal .fluid-gallery-thumbnails > ul > li {
-        display: block;
-        float: left;
-        height: 100%;
-        padding: 2px; }
-  .fluid-gallery .fluid-gallery-controls .fluid-gallery-thumbnails-window {
-    display: inline-block;
-    width: 100%;
-    height: 100%;
-    position: relative;
+    z-index: 5;
     overflow: hidden; }
-    .fluid-gallery .fluid-gallery-controls .fluid-gallery-thumbnails-window .fluid-gallery-thumbnails {
+    .fluid-gallery-wrapper .fluid-gallery-window img {
+      max-width: 100%;
+      max-height: 100%;
+      display: block;
+      margin: 0 auto; }
+    .fluid-gallery-wrapper .fluid-gallery-window .fluid-gallery-active-slide {
       position: absolute;
       top: 0;
-      left: 0; }
-      .fluid-gallery .fluid-gallery-controls .fluid-gallery-thumbnails-window .fluid-gallery-thumbnails > ul {
-        padding: 0; }
-        .fluid-gallery .fluid-gallery-controls .fluid-gallery-thumbnails-window .fluid-gallery-thumbnails > ul > li {
-          cursor: pointer;
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none; }
-          .fluid-gallery .fluid-gallery-controls .fluid-gallery-thumbnails-window .fluid-gallery-thumbnails > ul > li img {
-            background: #CCC;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+      background: #FFF; }
+    .fluid-gallery-wrapper .fluid-gallery-window .fluid-gallery-next-slide {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      z-index: 2;
+      background: #FFF; }
+  .fluid-gallery-wrapper .fluid-gallery-controls {
+    display: none; }
+    @media (min-width: 992px) {
+      .fluid-gallery-wrapper .fluid-gallery-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center; } }
+    .fluid-gallery-wrapper .fluid-gallery-controls .fluid-gallery-previous-arrow,
+    .fluid-gallery-wrapper .fluid-gallery-controls .fluid-gallery-next-arrow {
+      display: inline-flex; }
+    .fluid-gallery-wrapper .fluid-gallery-controls .fluid-gallery-thumbnails-window {
+      position: relative;
+      display: inline-flex;
+      flex-grow: 1;
+      overflow: hidden; }
+      .fluid-gallery-wrapper .fluid-gallery-controls .fluid-gallery-thumbnails-window .fluid-gallery-thumbnails {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%; }
+        .fluid-gallery-wrapper .fluid-gallery-controls .fluid-gallery-thumbnails-window .fluid-gallery-thumbnails > ul {
+          margin: 0;
+          padding: 0;
+          display: flex;
+          list-style: none; }
+          .fluid-gallery-wrapper .fluid-gallery-controls .fluid-gallery-thumbnails-window .fluid-gallery-thumbnails > ul > li {
+            border: 2px solid #CCC; }
+            .fluid-gallery-wrapper .fluid-gallery-controls .fluid-gallery-thumbnails-window .fluid-gallery-thumbnails > ul > li.active {
+              border-color: #00C; }
+            .fluid-gallery-wrapper .fluid-gallery-controls .fluid-gallery-thumbnails-window .fluid-gallery-thumbnails > ul > li img {
+              max-width: 100%;
+              max-height: 100%; }
+    .fluid-gallery-wrapper .fluid-gallery-controls.horizontal {
+      height: 90px;
+      width: 100%;
+      margin: 10px auto; }
+      .fluid-gallery-wrapper .fluid-gallery-controls.horizontal .fluid-gallery-thumbnails-window {
+        height: 100%; }
+        .fluid-gallery-wrapper .fluid-gallery-controls.horizontal .fluid-gallery-thumbnails-window .fluid-gallery-thumbnails > ul {
+          height: 100%; }
+          .fluid-gallery-wrapper .fluid-gallery-controls.horizontal .fluid-gallery-thumbnails-window .fluid-gallery-thumbnails > ul > li {
             height: 100%;
-            border: 1px solid #CCC;
-            -webkit-box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            box-sizing: border-box; }
-            .fluid-gallery .fluid-gallery-controls .fluid-gallery-thumbnails-window .fluid-gallery-thumbnails > ul > li img.active {
-              border-color: #F00; }
+            width: auto; }

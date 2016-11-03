@@ -8,25 +8,6 @@
 
 		this._activePointer = 0;
 		this._defaults = $.fn.fluidGallery.defaults;
-		this._dims = {
-			"controls": {
-				"height": 0,
-				"width": 0
-			},
-			"thumbnails": {
-				"height": 0,
-				width: 0
-			},
-			"thumbnailsWindow": {
-				"height": 0,
-				"width": 0
-			},
-			"width": 0,
-			"window": {
-				"height": 0,
-				"width": 0
-			}
-		};
 		this._id = "fg-";
 		this._images = [];
 		this._imagesLeftToLoad = 0;
@@ -128,7 +109,7 @@
 					.appendTo(gallery.$thumbnailsWindow)
 					.append(gallery.$gallery.children('ul'));
 
-				gallery.$thumbnails.find('img').first().addClass('active');
+				gallery.$thumbnails.find('li').first().addClass('active');
 			}
 
 			if (gallery.options.arrows != "none")
@@ -184,45 +165,15 @@
 
 		setDims: function () {
 			var gallery = this;
-			gallery._dims.width = gallery.$wrap.outerWidth();
+			var $firstLi = gallery.$thumbnails.find('li').first();
+			var h = gallery.$thumbnailsWindow.outerHeight(true) - ($firstLi.outerHeight(true) - $firstLi.height());
+			gallery.$thumbnails.find('li').each(function ()
+			{
+				var image = $('<img />').attr('src', $(this).find('img').attr('src'));
+				var ratio = image[0].width / image[0].height;
+				$(this).width(h * ratio);
+			});
 
-			if (gallery.options.controlsPosition == "top" || gallery.options.controlsPosition == "bottom") {
-				gallery._dims.window.width = gallery._dims.width;
-				gallery._dims.window.height = Math.ceil(gallery.options.height > 10 ? gallery.options.height : gallery._dims.window.width * gallery.options.height);
-				gallery.$window.width(gallery._dims.window.width);
-				gallery.$window.height(gallery._dims.window.height);
-				gallery.$activeSlide.height(gallery._dims.window.height);
-				gallery.$nextSlide.height(gallery._dims.window.height);
-
-				gallery._dims.controls.width = gallery._dims.width;
-				gallery._dims.controls.height = Math.ceil(gallery._dims.controls.width * gallery.options.controlsHeight);
-				gallery.$controls.height(gallery._dims.controls.height);
-
-				var arrowsWidth = 0;
-				if (gallery.options.arrows == "controls")
-				{
-					arrowsWidth += gallery.$previousArrow.outerWidth() + gallery.$nextArrow.outerWidth();
-				}
-				gallery._dims.thumbnailsWindow.width = gallery._dims.controls.width - arrowsWidth;
-				gallery._dims.thumbnailsWindow.height = gallery._dims.controls.height;
-				gallery.$thumbnailsWindow.width(gallery._dims.thumbnailsWindow.width);
-
-				gallery.$thumbnails.find('img').each(function () {
-					/*console.log(
-						$(this).outerWidth(true),
-						gallery._dims.thumbnailsWindow.height,
-						$(this).outerHeight(true),
-						Math.ceil( $(this).outerWidth(true) * ( gallery._dims.thumbnailsWindow.height / $(this).outerHeight(true) ) )
-					);*/
-					gallery._dims.thumbnails.width += Math.ceil( $(this).outerWidth(true) * ( gallery._dims.thumbnailsWindow.height / $(this).outerHeight(true) ) );
-				});
-				gallery._dims.thumbnails.height = gallery._dims.thumbnailsWindow.height;
-				gallery.$thumbnails.width(gallery._dims.thumbnails.width);
-				gallery.$thumbnails.height(gallery._dims.thumbnails.height);
-			}
-
-			// There is an issue where the li would still be the full width of the image, so we force a redraw to correct this.
-			gallery.$thumbnails.find('li').hide().show(0);
 
 		},
 
@@ -235,6 +186,17 @@
 				gallery.$previousArrow.click($.proxy(gallery.previousSlide, gallery));
 				gallery.$nextArrow.click($.proxy(gallery.nextSlide, gallery));
 			}
+
+			gallery.$window.swipe({
+				swipeLeft: function (event)
+				{
+					gallery.nextSlide();
+				},
+				swipeRight: function (event)
+				{
+					gallery.previousSlide();
+				}
+			});
 
 			gallery.$thumbnails.find('li').each(function (i)
 			{
@@ -302,16 +264,16 @@
 			var gallery = this;
 
 			gallery.$thumbnails.find('.active').removeClass('active');
-			var $thumb = gallery.$thumbnails.find('img:eq('+gallery._activePointer+')');
+			var $thumb = gallery.$thumbnails.find('li:eq('+gallery._activePointer+')');
 			$thumb.addClass('active');
 
 			var width = $thumb.outerWidth();
-			var offset = ( gallery._dims.thumbnailsWindow.width - width ) / 2;
+			var offset = ( gallery.$thumbnailsWindow.width() - width ) / 2;
 			var left = offset - $thumb.position().left;
 			if (left > 0) {
 				left = 0;
 			}
-			var max = - gallery._dims.thumbnails.width + gallery._dims.thumbnailsWindow.width;
+			var max = - gallery.$thumbnails.width() + gallery.$thumbnailsWindow.width();
 			if (left < max) {
 				left = max;
 			}
@@ -356,7 +318,6 @@
 		 * then the thumbnails will be 100px wide and the window will be 900px wide.
 		 */
 		controlsWidth: 0.1,
-		height: 0.5625,
 		play: true,
 		speed: 4000,
 		transition: "slide",
